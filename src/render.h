@@ -1,77 +1,79 @@
-// wasteland/render.h
+// Roguelib - src/render.h
+// github.com/leftbones/roguelib
 
-// Glyph + RenderSystem Structs
-// ------------------------------
+//#include "raylib/src/raylib.h"
 
-// Keeps track of screen dimensions, tilesets, tileset parameters, and the array of Glyph objects
+// RenderSystem - used to render glyphs to the game window
 typedef struct RenderSystem {
-	int screen_w;
-	int screen_h;
-
-	Texture2D tileset;
-	int tile_size;
-	int max_tiles_x;
-	int max_tiles_y;
-	int center_x;
-	int center_y;
-	Rectangle frame_rec;
-
-	Glyph glyph_map[256];
+    int screen_w;           // width of the screen in pixels
+    int screen_h;           // height of the screen in pixels
+    Color bg_color;         // background color of the screen
+    Texture2D tileset;      // path to the tileset image
+    int tile_size;          // size of each tile in pixels
+    int max_tiles_x;        // horizontal max tiles (screen_w / tile_size)
+    int max_tiles_y;        // vertical max tiles (screen_h / tile_size)
+    int center_x;           // center tile x position (in tiles)
+    int center_y;           // center tile y position (in tiles)
+    Rectangle frame_rec;    // rectangle used to get glyphs from the tileset
+    Glyph glyph_map[256];   // array of all glyphs in the tileset
 } Render;
 
 
-// Render Functions
-// ------------------------------
+// Initialize the RenderSystem, only needs to be done once
+Render RenderSystemInit(int screen_w, int screen_h, Color bg_color, int tile_size, Texture2D tileset) {
+    // Create new RenderSystem
+    Render rs;
 
-// Initializes a new RenderSystem, could probably be done with a constructor instead
-Render InitRenderSystem(int scrn_w, int scrn_h, int tsize, Texture2D tset) {
-	// Create RenderSystem
-	Render rs;
+    // Build the glyph map
+    for (int y = 0; y < 16; y++) {
+        for (int x = 0; x < 16; x++) {
+            Glyph g;
+            g.x = y;
+            g.y = x;
+            rs.glyph_map[x * 16 + y] = g;
+        }
+    }
 
-	// Build glyphmap
-	for (int y = 0; y < 16; y++) {
-		for (int x = 0; x < 16; x++) {
-			Glyph g;
-			g.x = y;
-			g.y = x;
-			rs.glyph_map[x * 16 + y] = g;
-		}
-	}
+    // Initialize RenderSystem with passed parameters
+    rs.screen_w = screen_w;
+    rs.screen_h = screen_h;
+    rs.bg_color = bg_color;
+    rs.tileset = tileset;
+    rs.tile_size = tile_size;
 
-	// Finish initialization
-	rs.tileset = tset;
-	rs.screen_w = scrn_w;
-	rs.screen_h = scrn_h;
-	rs.tile_size = tsize;
-	rs.max_tiles_x = scrn_w / tsize;
-	rs.max_tiles_y = scrn_h / tsize;
-	rs.center_x = rs.max_tiles_x / 2 - 1;
-	rs.center_y = rs.max_tiles_y / 2 - 1;
-	rs.frame_rec = (Rectangle){ 0.0f, 0.0f, (float)tset.width/tsize, (float)tset.height/tsize };
+    rs.max_tiles_x = screen_w / tile_size;
+    rs.max_tiles_y = screen_h / tile_size;
+    rs.center_x = rs.max_tiles_x / 2 - 1;
+    rs.center_y = rs.max_tiles_y / 2 - 1;
+    rs.frame_rec = (Rectangle){ 0.0f, 0.0f, (float)tileset.width / tile_size, (float)tileset.height / tile_size };
 
-	return rs;
-}
-
-// Draw a Glyph to the screen by passing in the index (int or defined name), position, and color
-// It figures out the tile position on the screen grid, then adjusts the frame_rec of the RenderSystem to where the Glyph is
-// located, then calls DrawTextureRec (raylib) to draw it to the screen at the position
-void DrawGlyph(Render rs, int idx, int x, int y, Color c) {
-	Vector2 pos = { x * rs.tile_size, y * rs.tile_size };
-
-	rs.frame_rec.x = rs.tile_size * rs.glyph_map[idx].x;
-	rs.frame_rec.y = rs.tile_size * rs.glyph_map[idx].y;
-
-	DrawTextureRec(rs.tileset, rs.frame_rec, pos, c);
+    return rs;
 }
 
 
-// Prints "strings" of text to the screen grid by matching each character in the passed string to its glyph counterpart,
-// then drawing those glyphs in sequence -- May expand this later on to use a separate texture for text specifically in order
-// to support more text characters and to be able to replace text characters in the standard texture with graphics and not
-// lose the ability to print readable text as a side effect.
-void PrintText(Render rs, char* text, int x, int y, Color c) {
-	for (int i = 0; i < strlen(text); i++) {
-		char idx = GetGlyphIndexByChar(text[i]);
-		DrawGlyph(rs, idx, x+i, y, c);
-	}
+// Draw a glyph to the screen using the passed index, position, and color
+void DrawGlyph(Render rs, int idx, int x, int y, Color col, bool overlay) {
+    Vector2 pos = { (float)x * rs.tile_size, (float)y * rs.tile_size };
+
+    rs.frame_rec.x = rs.tile_size * rs.glyph_map[idx].x;
+    rs.frame_rec.y = rs.tile_size * rs.glyph_map[idx].y;
+
+    if (overlay) { DrawRectangle((float)x * rs.tile_size, (float)y * rs.tile_size, rs.tile_size, rs.tile_size, rs.bg_color); }
+    DrawTextureRec(rs.tileset, rs.frame_rec, pos, col);
+}
+
+
+// Print a "string" to the screen by matching each character in the passed string to a glyph and drawing them in sequence
+void PrintText(Render rs, const char* text, int x, int y, Color col, bool overlay) {
+    // Iterate through the characters of the text
+    for (int i = 0; i < strlen(text); i++) {
+        // Find the index of the glyph matching the current character
+        char idx = GetGlyphIndexByChar(text[i]);
+
+        // Erase any glyphs that are at the position we want to print to prevent overlapping
+        if (overlay) { DrawRectangle((x + i) * rs.tile_size, y * rs.tile_size, rs.tile_size, rs.tile_size, rs.bg_color); }
+
+        // Draw the glyph
+        DrawGlyph(rs, idx, x+i, y, col, overlay);
+    }
 }

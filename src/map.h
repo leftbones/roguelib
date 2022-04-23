@@ -1,16 +1,20 @@
-// wasteland/map.h
+// Roguelib - src/map.h
+// github.com/leftbones/roguelib
 
-// Map Struct
-// ------------------------------
+// A Note About Maps
+// Maps are super neat, but right now kind of tedious to use. My plan is to build a secondary editor used for building
+// maps by drawing them similar to how RexPaint works, and that would then output a matrix that could be used here,
+// because building them by hand is definitely less than ideal, though it can be done in a pinch.
+
+//#include "raylib/src/raylib.h"
 
 typedef struct Map {
-	int w;
-	int h;
-	int matrix[];
+    int w;
+    int h;
+    int matrix[];
 } Map;
 
-
-const Map test_map = 
+/*const Map test_map = 
 {
 	.w = 7, .h = 7,
 	.matrix = {
@@ -22,7 +26,7 @@ const Map test_map =
 		186,250,250,250,250,250,186,
 		200,205,181,196,198,205,188,
 	}
-};
+};*/
 
 
 // Map Drawing Functions

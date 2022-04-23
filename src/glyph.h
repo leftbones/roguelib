@@ -1,12 +1,12 @@
-// wasteland/glyph.h
+// Roguelib - src/glyph.h
+// github.com/leftbones/roguelib
 
-// Glyph Struct
-// ------------------------------
+//#include "raylib/src/raylib.h"
 
-// Defines the position of a single glyph in the loaded texture
+// Glyph - a character from the tileset, stored for convenience
 typedef struct Glyph {
-	int x;
-	int y;
+    int x; // x position in the tileset
+    int y; // y position in the tileset
 } Glyph;
 
 
@@ -15,18 +15,21 @@ typedef struct Glyph {
 
 // Quick Note About Directions...
 //
-// Unidirectional glyph labeled 'N' means it is "north facing"
+// Unidirectional glyph labeled 'N' means it is "north facing", which could be thought of as "right side up"
 // Example: 'SBOX_TN' has its connecting end on its south side: ┬
 //
 // Multi-directional glyphs may also be labeled in this way, but sometimes will be labeled with U/D/L/R instead.
 //
-// I am aware this naming scheme directly contradicts the unicode standard.
+// I am aware this naming scheme directly contradicts the unicode standard, but writing all of these was super tedious
+// and I really don't feel like doing it all again.
 
 
 // Blank
+// ------------------------------
 #define    NONE         0 // NUL
 #define    SPACE       32 // Space
 #define    NBSP       255 // No-Break Space
+
 
 // Alphanumeric
 // ------------------------------
@@ -85,16 +88,16 @@ typedef struct Glyph {
 #define    LOWER_Y    121 // y
 #define    LOWER_Z    122 // z
 
-#define    NUM_1       48 // 1
-#define    NUM_2       49 // 2
-#define    NUM_3       50 // 3
-#define    NUM_4       51 // 4
-#define    NUM_5       52 // 5
-#define    NUM_6       53 // 6
-#define    NUM_7       54 // 7
-#define    NUM_8       55 // 8
-#define    NUM_9       50 // 9
-#define    NUM_0       50 // 0
+#define    NUM_1       49 // 1
+#define    NUM_2       50 // 2
+#define    NUM_3       51 // 3
+#define    NUM_4       52 // 4
+#define    NUM_5       53 // 5
+#define    NUM_6       54 // 6
+#define    NUM_7       55 // 7
+#define    NUM_8       56 // 8
+#define    NUM_9       57 // 9
+#define    NUM_0       48 // 0
 
 
 // Basic Symbols

@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/Users/evan/Projects/Public/Roguelib/testing/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/evan/Projects/Public/Roguelib/src -I/Users/evan/Projects/Public/Roguelib/testing/build/_deps/raylib_cpp-src/include -isystem /opt/homebrew/Cellar/raylib/4.0.0/include  -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -I/opt/homebrew/Cellar/raylib/4.0.0/include -std=gnu++11 -o CMakeFiles/build.dir/main.cpp.o -c /Users/evan/Projects/Public/Roguelib/testing/main.cpp",
+  "file": "/Users/evan/Projects/Public/Roguelib/testing/main.cpp"
+}
+]
